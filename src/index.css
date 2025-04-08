@@ -110,14 +110,15 @@
 
 /* Custom text wrapping utilities */
 .overflow-wrap-anywhere {
-  overflow-wrap: anywhere;
-  word-break: break-word;
-  white-space: pre-wrap;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  white-space: pre-wrap !important;
 }
 
 .break-words {
-  word-wrap: break-word;
-  white-space: pre-wrap;
+  word-wrap: break-word !important;
+  word-break: break-word !important;
+  white-space: pre-wrap !important;
 }
 
 /* Print specific styles */
@@ -126,6 +127,7 @@
     overflow-wrap: anywhere !important;
     word-break: break-word !important;
     white-space: pre-wrap !important;
+    overflow: visible !important;
   }
   
   .table-cell-wrap {
@@ -139,4 +141,23 @@
     height: auto !important;
     min-height: 24px;
   }
+}
+
+/* PDF generation styles */
+body.printing textarea,
+body.printing input,
+.pdf-generating textarea, 
+.pdf-generating input,
+.pdf-generating .break-words,
+.pdf-generating [class*="overflow-wrap"] {
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  white-space: pre-wrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+.pdf-generating textarea {
+  height: auto !important;
+  min-height: 24px;
 }

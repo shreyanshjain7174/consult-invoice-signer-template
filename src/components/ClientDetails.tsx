@@ -34,6 +34,7 @@ const ClientDetails = ({
             onChange={(e) => setClientName(e.target.value)}
             className="mt-1 break-words overflow-wrap-anywhere"
             placeholder="Client or Organization Name"
+            style={{ whiteSpace: 'pre-wrap' }}
           />
         </div>
 
@@ -45,9 +46,13 @@ const ClientDetails = ({
             id="clientAddress"
             value={clientAddress}
             onChange={(e) => setClientAddress(e.target.value)}
-            className="mt-1 h-24 break-words overflow-wrap-anywhere whitespace-pre-wrap print:whitespace-pre-wrap"
+            className="mt-1 h-auto min-h-24 break-words overflow-wrap-anywhere whitespace-pre-wrap print:whitespace-pre-wrap print:min-h-0"
             placeholder="Street Address, City, State, ZIP"
-            style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}
+            style={{ 
+              wordWrap: 'break-word', 
+              whiteSpace: 'pre-wrap',
+              overflowWrap: 'anywhere'
+            }}
           />
         </div>
 

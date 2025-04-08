@@ -18,31 +18,62 @@ const Index = () => {
     setIsPrinting(true);
     
     try {
-      // Add classes to improve text wrapping during PDF generation
+      // Apply print-friendly styles
+      document.body.classList.add('printing');
       invoiceRef.current.classList.add("pdf-generating");
       
-      // Temporary style changes to ensure text wrapping works in PDF
-      const elements = invoiceRef.current.querySelectorAll('textarea, input');
-      elements.forEach((el) => {
+      // Force all text elements to be visible and properly wrapped
+      const textElements = invoiceRef.current.querySelectorAll('textarea, input, .break-words, [class*="overflow-wrap"]');
+      const originalStyles: Map<HTMLElement, {[key: string]: string}> = new Map();
+      
+      textElements.forEach((el) => {
         if (el instanceof HTMLElement) {
+          // Save original styles
+          originalStyles.set(el, {
+            whiteSpace: el.style.whiteSpace,
+            wordBreak: el.style.wordBreak,
+            overflowWrap: el.style.overflowWrap,
+            overflow: el.style.overflow,
+            textOverflow: el.style.textOverflow,
+            height: el.style.height
+          });
+          
+          // Apply print-friendly styles
           el.style.whiteSpace = 'pre-wrap';
           el.style.wordBreak = 'break-word';
           el.style.overflowWrap = 'anywhere';
+          el.style.overflow = 'visible';
+          el.style.textOverflow = 'clip';
+          
+          // For textareas, ensure proper height
+          if (el.tagName === 'TEXTAREA') {
+            el.style.height = 'auto';
+          }
         }
       });
       
+      // Wait a bit for styles to apply
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       const canvas = await html2canvas(invoiceRef.current, {
         scale: 2,
-        logging: false,
+        logging: true,
         useCORS: true,
         allowTaint: true,
-        foreignObjectRendering: true, // Try enabling this for better text rendering
-        width: invoiceRef.current.offsetWidth,
-        height: invoiceRef.current.offsetHeight,
+        backgroundColor: '#ffffff',
+        windowWidth: invoiceRef.current.scrollWidth,
+        windowHeight: invoiceRef.current.scrollHeight,
+        scrollX: 0,
+        scrollY: 0,
       });
       
       // A4 size: 210 x 297 mm
-      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+      
       const imgWidth = 210;
       const pageHeight = 297;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
@@ -50,14 +81,14 @@ const Index = () => {
       let position = 0;
       
       // First page
-      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
+      pdf.addImage(canvas.toDataURL('image/jpeg', 1.0), 'JPEG', 0, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
       
       // Additional pages if needed
       while (heightLeft > 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
-        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
+        pdf.addImage(canvas.toDataURL('image/jpeg', 1.0), 'JPEG', 0, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
       }
       
@@ -76,20 +107,27 @@ const Index = () => {
         variant: "destructive",
       });
     } finally {
-      // Remove the class after PDF generation
+      // Restore original styles
+      document.body.classList.remove('printing');
+      
       if (invoiceRef.current) {
         invoiceRef.current.classList.remove("pdf-generating");
         
-        // Reset any temporary style changes
-        const elements = invoiceRef.current.querySelectorAll('textarea, input');
-        elements.forEach((el) => {
-          if (el instanceof HTMLElement) {
-            el.style.whiteSpace = '';
-            el.style.wordBreak = '';
-            el.style.overflowWrap = '';
+        // Find all elements that had their styles changed
+        const textElements = invoiceRef.current.querySelectorAll('textarea, input, .break-words, [class*="overflow-wrap"]');
+        textElements.forEach((el) => {
+          if (el instanceof HTMLElement && originalStyles.has(el)) {
+            const origStyles = originalStyles.get(el);
+            if (origStyles) {
+              // Restore original styles
+              Object.entries(origStyles).forEach(([prop, value]) => {
+                el.style[prop as any] = value;
+              });
+            }
           }
         });
       }
+      
       setIsPrinting(false);
     }
   };
