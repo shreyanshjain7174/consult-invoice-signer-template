@@ -39,7 +39,7 @@ const WorkItemsTable = ({
         </Button>
       </div>
 
-      <div className="border rounded-md">
+      <div className="border rounded-md overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -53,11 +53,12 @@ const WorkItemsTable = ({
           <TableBody>
             {workItems.map((item) => (
               <TableRow key={item.id}>
-                <TableCell>
+                <TableCell className="max-w-[200px]">
                   <Input 
                     value={item.description}
                     onChange={(e) => updateWorkItem(item.id, "description", e.target.value)}
                     placeholder="Enter work description"
+                    className="break-words overflow-wrap-anywhere"
                   />
                 </TableCell>
                 <TableCell className="text-right">

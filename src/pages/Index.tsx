@@ -18,20 +18,39 @@ const Index = () => {
     setIsPrinting(true);
     
     try {
+      // Add a class to improve text wrapping during PDF generation
+      invoiceRef.current.classList.add("pdf-generating");
+      
       const canvas = await html2canvas(invoiceRef.current, {
         scale: 2,
         logging: false,
         useCORS: true,
+        allowTaint: true,
+        foreignObjectRendering: false, // Setting this false can help with text rendering
+        width: invoiceRef.current.offsetWidth,
+        height: invoiceRef.current.offsetHeight,
       });
-      
-      const imgData = canvas.toDataURL('image/png');
       
       // A4 size: 210 x 297 mm
       const pdf = new jsPDF('p', 'mm', 'a4');
       const imgWidth = 210;
+      const pageHeight = 297;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
       
-      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      // First page
+      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+      
+      // Additional pages if needed
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+      
       pdf.save('invoice.pdf');
       
       toast({
@@ -47,6 +66,10 @@ const Index = () => {
         variant: "destructive",
       });
     } finally {
+      // Remove the class after PDF generation
+      if (invoiceRef.current) {
+        invoiceRef.current.classList.remove("pdf-generating");
+      }
       setIsPrinting(false);
     }
   };

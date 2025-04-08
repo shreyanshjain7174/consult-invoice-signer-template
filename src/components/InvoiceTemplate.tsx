@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import ClientDetails from "./ClientDetails";
 import InvoiceDetails from "./InvoiceDetails";
@@ -64,17 +65,17 @@ const InvoiceTemplate = () => {
   };
 
   return (
-    <div className="p-8 print:p-4 print:shadow-none">
-      <div className="flex justify-between mb-8">
+    <div className="p-8 print:p-4 print:shadow-none max-w-full overflow-hidden">
+      <div className="flex flex-col md:flex-row md:justify-between mb-8 break-words">
         <div>
           <h2 className="text-3xl font-bold text-gray-800">INVOICE</h2>
           <p className="text-gray-600 mt-1">Professional Consulting Services</p>
         </div>
-        <div className="text-right">
-          <div className="font-bold text-xl text-blue-600">Shreyansh Sancheti</div>
-          <p className="text-gray-600">Professional Consultant</p>
-          <p className="text-gray-600">contact@shreyanshsancheti.com</p>
-          <p className="text-gray-600">+1 (555) 123-4567</p>
+        <div className="text-right mt-4 md:mt-0">
+          <div className="font-bold text-xl text-blue-600 break-words">Shreyansh Sancheti</div>
+          <p className="text-gray-600 break-words">Professional Consultant</p>
+          <p className="text-gray-600 break-words overflow-wrap-anywhere">contact@shreyanshsancheti.com</p>
+          <p className="text-gray-600 break-words">+1 (555) 123-4567</p>
         </div>
       </div>
 

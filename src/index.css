@@ -107,3 +107,27 @@
 .font-signature {
   font-family: 'Dancing Script', cursive;
 }
+
+/* Custom text wrapping utilities */
+.overflow-wrap-anywhere {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.break-words {
+  word-wrap: break-word;
+}
+
+/* Print specific styles */
+@media print {
+  input, textarea {
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+  }
+  
+  .table-cell-wrap {
+    max-width: 150px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}

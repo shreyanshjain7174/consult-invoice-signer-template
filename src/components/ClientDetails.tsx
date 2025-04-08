@@ -32,7 +32,7 @@ const ClientDetails = ({
             id="clientName"
             value={clientName}
             onChange={(e) => setClientName(e.target.value)}
-            className="mt-1"
+            className="mt-1 break-words overflow-wrap-anywhere"
             placeholder="Client or Organization Name"
           />
         </div>
@@ -45,7 +45,7 @@ const ClientDetails = ({
             id="clientAddress"
             value={clientAddress}
             onChange={(e) => setClientAddress(e.target.value)}
-            className="mt-1 h-24"
+            className="mt-1 h-24 break-words overflow-wrap-anywhere"
             placeholder="Street Address, City, State, ZIP"
           />
         </div>
@@ -59,7 +59,7 @@ const ClientDetails = ({
             type="email"
             value={clientEmail}
             onChange={(e) => setClientEmail(e.target.value)}
-            className="mt-1"
+            className="mt-1 break-words overflow-wrap-anywhere"
             placeholder="client@example.com"
           />
         </div>
