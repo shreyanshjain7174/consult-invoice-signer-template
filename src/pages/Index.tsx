@@ -24,7 +24,7 @@ const Index = () => {
       
       // Force all text elements to be visible and properly wrapped
       const textElements = invoiceRef.current.querySelectorAll('textarea, input, .break-words, [class*="overflow-wrap"]');
-      const originalStyles: Map<HTMLElement, {[key: string]: string}> = new Map();
+      const originalStyles = new Map<HTMLElement, {[key: string]: string}>();
       
       textElements.forEach((el) => {
         if (el instanceof HTMLElement) {
@@ -116,7 +116,7 @@ const Index = () => {
         // Find all elements that had their styles changed
         const textElements = invoiceRef.current.querySelectorAll('textarea, input, .break-words, [class*="overflow-wrap"]');
         textElements.forEach((el) => {
-          if (el instanceof HTMLElement && originalStyles.has(el)) {
+          if (el instanceof HTMLElement) {
             const origStyles = originalStyles.get(el);
             if (origStyles) {
               // Restore original styles
