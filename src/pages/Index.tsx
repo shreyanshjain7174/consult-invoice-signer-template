@@ -18,15 +18,25 @@ const Index = () => {
     setIsPrinting(true);
     
     try {
-      // Add a class to improve text wrapping during PDF generation
+      // Add classes to improve text wrapping during PDF generation
       invoiceRef.current.classList.add("pdf-generating");
+      
+      // Temporary style changes to ensure text wrapping works in PDF
+      const elements = invoiceRef.current.querySelectorAll('textarea, input');
+      elements.forEach((el) => {
+        if (el instanceof HTMLElement) {
+          el.style.whiteSpace = 'pre-wrap';
+          el.style.wordBreak = 'break-word';
+          el.style.overflowWrap = 'anywhere';
+        }
+      });
       
       const canvas = await html2canvas(invoiceRef.current, {
         scale: 2,
         logging: false,
         useCORS: true,
         allowTaint: true,
-        foreignObjectRendering: false, // Setting this false can help with text rendering
+        foreignObjectRendering: true, // Try enabling this for better text rendering
         width: invoiceRef.current.offsetWidth,
         height: invoiceRef.current.offsetHeight,
       });
@@ -69,6 +79,16 @@ const Index = () => {
       // Remove the class after PDF generation
       if (invoiceRef.current) {
         invoiceRef.current.classList.remove("pdf-generating");
+        
+        // Reset any temporary style changes
+        const elements = invoiceRef.current.querySelectorAll('textarea, input');
+        elements.forEach((el) => {
+          if (el instanceof HTMLElement) {
+            el.style.whiteSpace = '';
+            el.style.wordBreak = '';
+            el.style.overflowWrap = '';
+          }
+        });
       }
       setIsPrinting(false);
     }

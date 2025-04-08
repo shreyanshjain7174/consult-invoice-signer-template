@@ -45,8 +45,9 @@ const ClientDetails = ({
             id="clientAddress"
             value={clientAddress}
             onChange={(e) => setClientAddress(e.target.value)}
-            className="mt-1 h-24 break-words overflow-wrap-anywhere"
+            className="mt-1 h-24 break-words overflow-wrap-anywhere whitespace-pre-wrap print:whitespace-pre-wrap"
             placeholder="Street Address, City, State, ZIP"
+            style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}
           />
         </div>
 
