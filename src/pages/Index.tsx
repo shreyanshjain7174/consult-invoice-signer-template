@@ -1,29 +1,54 @@
 
 import { Button } from "@/components/ui/button";
 import InvoiceTemplate from "@/components/InvoiceTemplate";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 const Index = () => {
   const { toast } = useToast();
   const [isPrinting, setIsPrinting] = useState(false);
+  const invoiceRef = useRef<HTMLDivElement>(null);
 
-  const handleExportPDF = () => {
+  const handleExportPDF = async () => {
+    if (!invoiceRef.current) return;
+    
     setIsPrinting(true);
     
-    // Simulate PDF generation delay
-    setTimeout(() => {
-      setIsPrinting(false);
+    try {
+      const canvas = await html2canvas(invoiceRef.current, {
+        scale: 2,
+        logging: false,
+        useCORS: true,
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      
+      // A4 size: 210 x 297 mm
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 210;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      pdf.save('invoice.pdf');
       
       toast({
         title: "PDF Export Ready",
-        description: "Your invoice has been prepared for download",
+        description: "Your invoice has been downloaded",
       });
+    } catch (error) {
+      console.error('Error generating PDF:', error);
       
-      // In a real implementation, you would use a library like jsPDF or 
-      // a server-side solution to generate the actual PDF
-    }, 1500);
+      toast({
+        title: "PDF Export Failed",
+        description: "There was a problem generating your PDF",
+        variant: "destructive",
+      });
+    } finally {
+      setIsPrinting(false);
+    }
   };
 
   return (
@@ -41,7 +66,7 @@ const Index = () => {
           </Button>
         </div>
         
-        <div className="bg-white shadow rounded-lg overflow-hidden">
+        <div className="bg-white shadow rounded-lg overflow-hidden" ref={invoiceRef}>
           <InvoiceTemplate />
         </div>
       </div>

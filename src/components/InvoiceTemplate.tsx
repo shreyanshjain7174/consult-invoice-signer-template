@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import ClientDetails from "./ClientDetails";
 import InvoiceDetails from "./InvoiceDetails";
@@ -65,7 +64,7 @@ const InvoiceTemplate = () => {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-8 print:p-4 print:shadow-none">
       <div className="flex justify-between mb-8">
         <div>
           <h2 className="text-3xl font-bold text-gray-800">INVOICE</h2>
